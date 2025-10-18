@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Skills</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('image.png') repeat;
+      color: white;
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      padding: 1rem;
+      margin-bottom: 40px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      position: relative;
+      transition: color 0.3s;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -5px;
+      width: 100%;
+      height: 2px;
+      background-color: #d0a565;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #d0a565;
+    }
+
+    nav a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    nav a.button::after {
+      display: none !important;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 10px;
+      background-color: rgba(0, 0, 0, 0.95);
+      min-width: fit-content;
+      z-index: 999;
+    }
+
+    .dropdown-content a {
+      position: relative;
+      color: #fff;
+      padding: 10px 5px;
+      text-decoration: none;
+      display: block;
+      transition: background 0.2s;
+      font-size: 0.95rem;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #111;
+      color: #d0a565;
+    }
+
+    .dropdown:hover .dropdown-content,
+    .dropdown:focus-within .dropdown-content {
+      display: block;
+    }
+
+    .dropdown:hover > a,
+    .dropdown:focus-within > a,
+    .dropdown-content:hover ~ a {
+      color: #d0a565 !important;
+    }
+
+    .button {
+      border-radius: 10px;
+      padding: 8px 10px;
+      border: 1px solid #d0a565;
+      color: #d0a565;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .button:hover {
+      background: #d0a565;
+      color: #000;
+    }
+
+    .content {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #d0a565;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .skill-category {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(208, 165, 101, 0.3);
+      border-radius: 25px;
+      padding: 0;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-banner {
+      width: 100%;
+      height: 200px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 25px 25px 0 0;
+    }
+
+    .skill-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.8;
+    }
+
+    .skill-banner::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 25px 25px 0 0;
+    }
+
+    .skill-content {
+      padding: 35px;
+    }
+
+    .skill-category::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(208, 165, 101, 0.15), rgba(208, 165, 101, 0.05), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .skill-category:hover::before {
+      left: 100%;
+    }
+
+    .skill-category:hover {
+      transform: translateY(-10px) scale(1.02);
+      border-color: #d0a565;
+      box-shadow: 0 25px 50px rgba(208, 165, 101, 0.3), 0 0 30px rgba(208, 165, 101, 0.1);
+    }
+
+    .skill-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+
+    .skill-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #d0a565, #b8944a);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 20px;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid rgba(208, 165, 101, 0.3);
+    }
+
+    .skill-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    .skill-icon::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.4s ease;
+    }
+
+    .skill-category:hover .skill-icon::before {
+      left: 100%;
+    }
+
+    .skill-category:hover .skill-icon {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 8px 20px rgba(208, 165, 101, 0.5);
+      border-color: #d0a565;
+    }
+
+    .skill-title {
+      color: #d0a565;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0;
+      transition: color 0.3s ease;
+      font-family: 'Dancing Script', cursive;
+      text-align: center;
+      width: 100%;
+    }
+
+    .skill-category:hover .skill-title {
+      color: #b8944a;
+    }
+
+    .skill-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .skill-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(208, 165, 101, 0.2);
+    }
+
+    .skill-item:last-child {
+      border-bottom: none;
+    }
+
+    .skill-name {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .skill-level {
+      position: relative;
+      width: 120px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .skill-level-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #d0a565, #b8944a);
+      border-radius: 4px;
+      transition: all 0.8s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-level-fill::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .skill-category:hover .skill-level-fill::before {
+      left: 100%;
+    }
+
+    .skill-category:hover .skill-level-fill {
+      filter: brightness(1.3) saturate(1.2);
+      box-shadow: 0 0 10px rgba(208, 165, 101, 0.5);
+    }
+
+    .loader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #000;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeOut 1s ease 2s forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    .pl, .pl__worm {
+      animation-duration: 4s;
+      animation-iteration-count: infinite;
+    }
+
+    .pl {
+      animation-name: bump;
+      animation-timing-function: linear;
+      width: 8em;
+      height: 8em;
+    }
+
+    .pl__ring {
+      stroke: hsla(0,10%,10%,0.1);
+    }
+
+    .pl__worm {
+      animation-name: worm;
+      animation-timing-function: cubic-bezier(0.42, 0.17, 0.75, 0.83);
+    }
+
+    @keyframes bump {
+      from, 42%, 46%, 51%, 55%, 59%, 63%, 67%, 71%, 74%, 78%, 81%, 85%, 88%, 92%, to {
+        transform: translate(0, 0);
+      }
+      44% { transform: translate(1.33%, 6.75%); }
+      53% { transform: translate(-16.67%, -0.54%); }
+      61% { transform: translate(3.66%, -2.46%); }
+      69% { transform: translate(-0.59%, 15.27%); }
+      76% { transform: translate(-1.92%, -4.68%); }
+      80% { transform: translate(9.38%, 0.96%); }
+      90% { transform: translate(-4.55%, 1.98%); }
+    }
+
+    @keyframes worm {
+      from { stroke-dashoffset: 10; }
+      25% { stroke-dashoffset: 295; }
+      to { stroke-dashoffset: 1165; }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader">
+    <svg class="pl" viewBox="0 0 128 128" width="128px" height="128px" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="pl-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d0a565" />
+          <stop offset="100%" stop-color="#927344" />
+        </linearGradient>
+      </defs>
+      <circle class="pl__ring" r="56" cx="64" cy="64" fill="none" stroke="hsla(0,10%,10%,0.1)" stroke-width="16" stroke-linecap="round" />
+      <path class="pl__worm" d="M92,15.492S78.194,4.967,66.743,16.887c-17.231,17.938-28.26,96.974-28.26,96.974L119.85,59.892l-99-31.588,57.528,89.832L97.8,19.349,13.636,88.51l89.012,16.015S81.908,38.332,66.1,22.337C50.114,6.156,36,15.492,36,15.492a56,56,0,1,0,56,0Z" fill="none" stroke="url(#pl-grad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="44 1111" stroke-dashoffset="10" />
+    </svg>
+  </div>
+
+  <nav>
+    <a href="index.html">HOME</a>
+    <a href="aboutme.html">ABOUT ME</a>
+    <div class="dropdown">
+      <a href="#">EXPERIENCE</a>
+      <div class="dropdown-content">
+        <a href="projects.html">My Projects</a>
+        <a href="work.html">Work Experience</a>
+        <a href="skills.html">My Skills</a>
+        <a href="education.html">Education</a>
+      </div>
+    </div>
+    <a href="#" class="button">CONTACT ME</a>
+  </nav>
+
+  <div class="content">
+    <h1>My Skills</h1>
+    <div class="skills-grid">
+      <div class="skill-category">
+        <div class="skill-banner">
+          <img src="TechnicalSkills.png" alt="Technical Skills Banner">
+        </div>
+        <div class="skill-content">
+          <div class="skill-header">
+            <h2 class="skill-title">Technical Skills</h2>
+          </div>
+        <div class="skill-list">
+          <div class="skill-item">
+            <span class="skill-name">JavaScript</span>
+            <div class="skill-level">
+              <div class="skill-level-fill" style="width: 90%;"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">React</span>
+            <div class="skill-level">
+              <div class="skill-level-fill" style="width: 85%;"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">Node.js</span>
+            <div class="skill-level">
+              <div class="skill-level-fill" style="width: 80%;"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">Python</span>
+            <div class="skill-level">
+              <div class="skill-level-fill" style="width: 75%;"></div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <div class="skill-category">
+        <div class="skill-banner">
+          <img src="DesignSkills.png" alt="Design Skills Banner">
+        </div>
+        <div class="skill-content">
+          <div class="skill-header">
+            <h2 class="skill-title">Design Skills</h2>
+          </div>
+        <div class="skill-list">
+          <div class="skill-item">
+            <span class="skill-name">UI/UX Design</span>
+            <div class="skill-level">
+              <div class="skill-level-fill" style="width: 85%;"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">Figma</span>
+            <div class="skill-level">
+              <div class="skill-level-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">Adobe Creative Suite</span>
+            <div class="skill-level">
+              <div class="skill-level-fill" style="width: 70%;"></div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <div class="skill-category">
+        <div class="skill-banner">
+          <img src="SoftSkills.png" alt="Soft Skills Banner">
+        </div>
+        <div class="skill-content">
+          <div class="skill-header">
+            <h2 class="skill-title">Soft Skills</h2>
+          </div>
+        <div class="skill-list">
+          <div class="skill-item">
+            <span class="skill-name">Project Management</span>
+            <div class="skill-level">
+              <div class="skill-level-fill" style="width: 85%;"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">Team Leadership</span>
+            <div class="skill-level">
+              <div class="skill-level-fill" style="width: 80%;"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">Communication</span>
+            <div class="skill-level">
+              <div class="skill-level-fill" style="width: 90%;"></div>
+            </div>
+          </div>
+          <div class="skill-item">
+            <span class="skill-name">Problem Solving</span>
+            <div class="skill-level">
+              <div class="skill-level-fill" style="width: 88%;"></div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

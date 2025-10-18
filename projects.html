@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Projects</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('image.png') repeat;
+      color: white;
+      min-height: 100vh;
+      padding: 40px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      padding: 1rem;
+      margin-bottom: 40px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      position: relative;
+      transition: color 0.3s;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -5px;
+      width: 100%;
+      height: 2px;
+      background-color: #d0a565;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #d0a565;
+    }
+
+    nav a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    nav a.button::after {
+      display: none !important;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 10px;
+      background-color: rgba(0, 0, 0, 0.95);
+      min-width: fit-content;
+      z-index: 999;
+    }
+
+    .dropdown-content a {
+      position: relative;
+      color: #fff;
+      padding: 10px 5px;
+      text-decoration: none;
+      display: block;
+      transition: background 0.2s;
+      font-size: 0.95rem;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #111;
+      color: #d0a565;
+    }
+
+    .dropdown:hover .dropdown-content,
+    .dropdown:focus-within .dropdown-content {
+      display: block;
+    }
+
+    .dropdown:hover > a,
+    .dropdown:focus-within > a,
+    .dropdown-content:hover ~ a {
+      color: #d0a565 !important;
+    }
+
+    .button {
+      border-radius: 10px;
+      padding: 8px 10px;
+      border: 1px solid #d0a565;
+      color: #d0a565;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .button:hover {
+      background: #d0a565;
+      color: #000;
+    }
+
+    .content {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #d0a565;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 1200px) {
+      .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .project-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .project-item {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(208, 165, 101, 0.3);
+      border-radius: 20px;
+      padding: 0;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(208, 165, 101, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .project-item:hover::before {
+      left: 100%;
+    }
+
+    .project-item:hover {
+      transform: translateY(-10px);
+      border-color: #d0a565;
+      box-shadow: 0 20px 40px rgba(208, 165, 101, 0.2);
+    }
+
+    .project-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+    .project-image::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-size: 40px;
+      opacity: 0.3;
+    }
+
+    .project-title {
+      color: #d0a565;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      transition: color 0.3s ease;
+    }
+
+    .project-item:hover .project-title {
+      color: #b8944a;
+    }
+
+    .project-content {
+      padding: 30px;
+    }
+
+    .project-description {
+      color: #fff;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+
+    .project-tech {
+      color: #d0a565;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .project-link {
+      display: inline-block;
+      color: #d0a565;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .project-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #d0a565;
+      transition: width 0.3s ease;
+    }
+
+    .project-link:hover::after {
+      width: 100%;
+    }
+
+    .project-link:hover {
+      color: #b8944a;
+    }
+
+    .loader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #000;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeOut 1s ease 2s forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    .pl, .pl__worm {
+      animation-duration: 4s;
+      animation-iteration-count: infinite;
+    }
+
+    .pl {
+      animation-name: bump;
+      animation-timing-function: linear;
+      width: 8em;
+      height: 8em;
+    }
+
+    .pl__ring {
+      stroke: hsla(0,10%,10%,0.1);
+    }
+
+    .pl__worm {
+      animation-name: worm;
+      animation-timing-function: cubic-bezier(0.42, 0.17, 0.75, 0.83);
+    }
+
+    @keyframes bump {
+      from, 42%, 46%, 51%, 55%, 59%, 63%, 67%, 71%, 74%, 78%, 81%, 85%, 88%, 92%, to {
+        transform: translate(0, 0);
+      }
+      44% { transform: translate(1.33%, 6.75%); }
+      53% { transform: translate(-16.67%, -0.54%); }
+      61% { transform: translate(3.66%, -2.46%); }
+      69% { transform: translate(-0.59%, 15.27%); }
+      76% { transform: translate(-1.92%, -4.68%); }
+      80% { transform: translate(9.38%, 0.96%); }
+      90% { transform: translate(-4.55%, 1.98%); }
+    }
+
+    @keyframes worm {
+      from { stroke-dashoffset: 10; }
+      25% { stroke-dashoffset: 295; }
+      to { stroke-dashoffset: 1165; }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader">
+    <svg class="pl" viewBox="0 0 128 128" width="128px" height="128px" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="pl-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d0a565" />
+          <stop offset="100%" stop-color="#927344" />
+        </linearGradient>
+      </defs>
+      <circle class="pl__ring" r="56" cx="64" cy="64" fill="none" stroke="hsla(0,10%,10%,0.1)" stroke-width="16" stroke-linecap="round" />
+      <path class="pl__worm" d="M92,15.492S78.194,4.967,66.743,16.887c-17.231,17.938-28.26,96.974-28.26,96.974L119.85,59.892l-99-31.588,57.528,89.832L97.8,19.349,13.636,88.51l89.012,16.015S81.908,38.332,66.1,22.337C50.114,6.156,36,15.492,36,15.492a56,56,0,1,0,56,0Z" fill="none" stroke="url(#pl-grad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="44 1111" stroke-dashoffset="10" />
+    </svg>
+  </div>
+
+  <nav>
+    <a href="index.html">HOME</a>
+    <a href="aboutme.html">ABOUT ME</a>
+    <div class="dropdown">
+      <a href="#">EXPERIENCE</a>
+      <div class="dropdown-content">
+        <a href="projects.html">My Projects</a>
+        <a href="work.html">Work Experience</a>
+        <a href="skills.html">My Skills</a>
+        <a href="education.html">Education</a>
+      </div>
+    </div>
+    <a href="#" class="button">CONTACT ME</a>
+  </nav>
+
+  <div class="content">
+    <h1>MY PROJECTS</h1>
+    <div class="project-grid">
+      <div class="project-item">
+        <div class="project-image"><img src="Payment.png" alt="App Image"></div>
+        <div class="project-content">
+          <h3 class="project-title">Payment App Development</h3>
+          <p class="project-description">Designed a prototype and technology stack for international payments system management, focusing on secure transactions and user experience.</p>
+          <div class="project-tech">Technologies: React, Node.js, MongoDB</div>
+          <a href="https://paykarindia.netlify.app/" class="project-link">View Project →</a>
+        </div>
+      </div>
+      <div class="project-item">
+        <div class="project-image"><img src="Parking.png" alt="App Image"></div>
+        <div class="project-content">
+          <h3 class="project-title">Smart Parking App (UI/UX)</h3>
+          <p class="project-description">Designed a prototype and technology stack for efficient parking management with real-time availability and booking features.</p>
+          <div class="project-tech">Technologies: Flutter, Firebase, Google Maps API</div>
+          <a href="#" class="project-link">View Project →</a>
+        </div>
+      </div>
+      <div class="project-item">
+        <div class="project-image"><img src="Feedback.png" alt="App Image"></div>
+        <div class="project-content">
+          <h3 class="project-title">Public Transport Feedback Website</h3>
+          <p class="project-description">Developed a survey platform for gathering user feedback on public transportation. Integrated feedback analysis and contact details display.</p>
+          <div class="project-tech">Technologies: HTML, CSS, JavaScript, PHP</div>
+          <a href="https://mumbai-transport.netlify.app/" class="project-link">View Project →</a>
+        </div>
+      </div>
+      <div class="project-item">
+        <div class="project-image"><img src="Manor.png" alt="App Image"></div>
+        <div class="project-content">
+          <h3 class="project-title">Manor Web App</h3>
+          <p class="project-description">Developed a Website for Manor Company with mordern and responsive UI fulfilling requirements as expected for the managing director and co-founder.</p>
+          <div class="project-tech">Technologies: Typescript, Tailwind CSS, JavaScript, PHP, MongoDB</div>
+          <a href="https://manor-tea-website.netlify.app/" class="project-link">View Project →</a>
+        </div>
+      </div>
+      <div class="project-item">
+        <div class="project-image"><img src="Cms.png" alt="App Image"></div>
+        <div class="project-content">
+          <h3 class="project-title">The Digital Canvas Blog</h3>
+          <p class="project-description">Developed a full-stack Blog Web Application as part of the academic curriculum.
+Executed under faculty supervision, aligning with syllabus requirements.
+Focused on end-to-end development and deployment practices.</p>
+          <div class="project-tech">Technologies: JavaScript, Tailwind-CSS, Python, MongoDB Atlas</div>
+          <a href="https://manor-tea-website.netlify.app/" class="project-link">View Project →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

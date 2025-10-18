@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio - Interactive Skills</title>
+  
+  <!-- Font import from your index.html -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif; /* Font applied from your index.html */
+    }
+    body {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+    #bg-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      display: block;
+      background: radial-gradient(circle at 60% 40%, #000 0%, #111 100%);
+      z-index: 1;
+    }
+    #center-img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 170px;
+      height: 170px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      z-index: 2;
+      object-fit: cover;
+      border: 3px solid #d0a565;
+      background: #191919;
+      box-shadow: 0 4px 40px #d0a56533;
+    }
+    #hover-card {
+        position: absolute;
+        width: 320px;
+        padding: 20px;
+        background: #000;
+        border: 2px solid #d0a565;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px #d0a56550;
+        z-index: 3;
+        color: #fff;
+        font-size: 1.1rem;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        visibility: hidden;
+    }
+    #hover-card.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+    .hidden { display: none !important; }
+    #skill-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #skill-overlay.visible { opacity: 1; }
+    #skill-card {
+      position: relative;
+      width: 90%;
+      max-width: 450px;
+      padding: 30px 35px;
+      background: #0a0a0a;
+      border-radius: 20px;
+      border: 2px solid #d0a565;
+      box-shadow: 0 10px 50px #d0a56540;
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+    }
+    #skill-overlay.visible #skill-card { transform: scale(1); }
+    #card-title { color: #d0a565; font-size: 2rem; margin: 0 0 15px 0; }
+    #card-desc { color: #fff; font-size: 1.1rem; line-height: 1.6; margin: 0; }
+    #close-btn { position: absolute; top: 15px; right: 20px; font-size: 2.5rem; color: #fff; cursor: pointer; transition: color 0.2s; }
+    #close-btn:hover { color: #d0a565; }
+
+    /* --- NEW: Styles from your index.html --- */
+    nav {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center; 
+        justify-content: center;
+        gap: 30px;
+        padding: 1rem;
+        z-index: 5; /* Ensure nav is above canvas */
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      position: relative;
+      transition: color 0.3s;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -5px;
+      width: 100%;
+      height: 2px;
+      background-color: #d0a565;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+    nav a:hover {
+      color: #d0a565;
+    }
+    nav a:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    nav a.button::after {
+        display: none !important;
+    }
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 10px;
+        background-color: rgba(0, 0, 0, 0.95);
+        min-width: fit-content;
+        z-index: 999;
+    }
+    .dropdown-content a {
+        position: relative;
+        color: #fff;
+        padding: 10px 15px;
+        text-decoration: none;
+        display: block;
+        transition: background 0.2s;
+        font-size: 0.95rem;
+    }
+    .dropdown-content a:hover {
+        background-color: #111;
+        color: #d0a565;
+    }
+    .dropdown:hover .dropdown-content,
+    .dropdown:focus-within .dropdown-content {
+        display: block;
+    }
+    .dropdown:hover > a,
+    .dropdown:focus-within > a {
+        color: #d0a565 !important;
+    }
+    .button {
+      border-radius: 10px;
+      padding: 8px 15px;
+      border: 1px solid #d0a565;
+      color: #d0a565;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s, color 0.3s;
+    }
+    .button:hover {
+      background: #d0a565;
+      color: #000;
+    }
+    .loader {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: #000;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeOut 1s ease 2s forwards;
+    }
+    @keyframes fadeOut {
+        to {
+            opacity: 0;
+            visibility: hidden;
+        }
+    }
+    .pl, .pl__worm {
+        animation-duration: 4s;
+        animation-iteration-count: infinite;
+    }
+    .pl {
+        animation-name: bump;
+        animation-timing-function: linear;
+        width: 8em;
+        height: 8em;
+    }
+    .pl__ring {
+        stroke: hsla(0,10%,10%,0.1);
+    }
+    .pl__worm {
+        animation-name: worm;
+        animation-timing-function: cubic-bezier(0.42, 0.17, 0.75, 0.83);
+    }
+    @keyframes bump {
+        from, 42%, 46%, 51%, 55%, 59%, 63%, 67%, 71%, 74%, 78%, 81%, 85%, 88%, 92%, to { transform: translate(0, 0); }
+        44% { transform: translate(1.33%, 6.75%); } 53% { transform: translate(-16.67%, -0.54%); }
+        61% { transform: translate(3.66%, -2.46%); } 69% { transform: translate(-0.59%, 15.27%); }
+        76% { transform: translate(-1.92%, -4.68%); } 80% { transform: translate(9.38%, 0.96%); }
+        90% { transform: translate(-4.55%, 1.98%); }
+    }
+    @keyframes worm {
+        from { stroke-dashoffset: 10; }
+        25% { stroke-dashoffset: 295; }
+        to { stroke-dashoffset: 1165; }
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- NEW: Loader from your index.html -->
+  <div class="loader">
+    <svg class="pl" viewBox="0 0 128 128" width="128px" height="128px" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="pl-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d0a565" />
+          <stop offset="100%" stop-color="#927344" />
+        </linearGradient>
+      </defs>
+      <circle class="pl__ring" r="56" cx="64" cy="64" fill="none" stroke="hsla(0,10%,10%,0.1)" stroke-width="16" stroke-linecap="round" />
+      <path class="pl__worm" d="M92,15.492S78.194,4.967,66.743,16.887c-17.231,17.938-28.26,96.974-28.26,96.974L119.85,59.892l-99-31.588,57.528,89.832L97.8,19.349,13.636,88.51l89.012,16.015S81.908,38.332,66.1,22.337C50.114,6.156,36,15.492,36,15.492a56,56,0,1,0,56,0Z" fill="none" stroke="url(#pl-grad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="44 1111" stroke-dashoffset="10" />
+    </svg>
+  </div>
+
+  <!-- NEW: Navigation from your index.html -->
+  <nav>
+    <a href="index.html" class="active">HOME</a>
+    <div class="dropdown">
+      <a href="#experience">EXPERIENCE</a>
+      <div class="dropdown-content">
+        <a href="projects.html">My Projects</a>
+        <a href="work.html">Work Experience</a>
+        <a href="skills.html">My Skills</a>
+        <a href="education.html">Education</a>
+      </div>
+    </div>
+    <a href="#contact" class="button">CONTACT ME</a>
+  </nav>
+
+  <canvas id="bg-canvas"></canvas>
+  <img id="center-img" src="https://i.imgur.com/RRUe0Mo.png" alt="Profile" />
+  
+  <div id="hover-card"></div>
+
+  <div id="skill-overlay" class="hidden">
+    <div id="skill-card">
+      <span id="close-btn">&times;</span>
+      <h2 id="card-title"></h2>
+      <p id="card-desc"></p>
+    </div>
+  </div>
+
+  <script>
+    // --- Data, Configuration, and Script ---
+    // (The JavaScript for the skill bubble animation remains the same as the last version)
+    const SKILLS = [
+        { title: 'Skill 01', description: 'A short description about the first skill appears here.' },
+        { title: 'Skill 02', description: 'This card explains more about the second core skill.' },
+        { title: 'Skill 03', description: 'Details regarding the third skill and its application.' },
+        { title: 'Skill 04', description: 'Information on the fourth skill, showcasing expertise.' },
+        { title: 'Skill 05', description: 'The fifth skill is detailed in this descriptive card.' },
+    ];
+    const CENTRAL_RADIUS = 85; 
+    const BALLOON_RADIUS = 90;
+    const ATTRACTION_SPEED = 1.2;
+    const ELASTICITY = 0.85;
+    
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    const hoverCard = document.getElementById('hover-card');
+    const overlay = document.getElementById('skill-overlay');
+    const cardTitle = document.getElementById('card-title');
+    const cardDesc = document.getElementById('card-desc');
+    const closeBtn = document.getElementById('close-btn');
+
+    let W = window.innerWidth, H = window.innerHeight;
+    let hoveredBalloon = null;
+    let isFrozen = false; 
+    let balloons = [];
+
+    class Balloon {
+      constructor(x, y, skill) {
+        this.x = x; this.y = y; this.vx = 0; this.vy = 0;
+        this.radius = BALLOON_RADIUS; this.skill = skill;
+      }
+      
+      draw(ctx) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
+        ctx.fillStyle = '#000000cc';
+        ctx.fill();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#d0a565';
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = '#d0a565' + "99";
+        ctx.stroke();
+        ctx.restore();
+        
+        ctx.save();
+        ctx.font = 'bold 1.7rem "Segoe UI", Arial, sans-serif';
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowColor = '#000b';
+        ctx.shadowBlur = 10;
+        ctx.fillText(this.skill.title, this.x, this.y);
+        ctx.restore();
+      }
+
+      update(centerX, centerY, others) {
+        let dx = centerX - this.x, dy = centerY - this.y, dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist > 1) { this.vx = (dx / dist) * ATTRACTION_SPEED; this.vy = (dy / dist) * ATTRACTION_SPEED; }
+        this.x += this.vx; this.y += this.vy;
+        
+        let cdx = this.x - centerX, cdy = this.y - centerY, cDist = Math.sqrt(cdx*cdx + cdy*cdy);
+        if (cDist < this.radius + CENTRAL_RADIUS) {
+            let overlap = this.radius + CENTRAL_RADIUS - cDist;
+            let normalX = cdx / cDist;
+            let normalY = cdy / cDist;
+            this.x += normalX * overlap; this.y += normalY * overlap;
+            let dotProduct = this.vx * normalX + this.vy * normalY;
+            this.vx = (this.vx - 2 * dotProduct * normalX) * ELASTICITY;
+            this.vy = (this.vy - 2 * dotProduct * normalY) * ELASTICITY;
+        }
+
+        for (let other of others) {
+            if (other === this) continue;
+            let bdx = other.x - this.x;
+            let bdy = other.y - this.y;
+            let bDist = Math.sqrt(bdx*bdx + bdy*bdy);
+            let minDist = this.radius + other.radius;
+
+            if (bDist < minDist) {
+                let overlap = (minDist - bDist) / 2;
+                let normalX = bdx / bDist;
+                let normalY = bdy / bDist;
+                this.x -= normalX * overlap; this.y -= normalY * overlap;
+                other.x += normalX * overlap; other.y += normalY * overlap;
+
+                let v1 = this.vx * normalX + this.vy * normalY;
+                let v2 = other.vx * normalX + other.vy * normalY;
+                
+                let newV1 = v2 * ELASTICITY;
+                let newV2 = v1 * ELASTICITY;
+                
+                this.vx += (newV1 - v1) * normalX;
+                this.vy += (newV1 - v1) * normalY;
+                other.vx += (newV2 - v2) * normalX;
+                other.vy += (newV2 - v2) * normalY;
+            }
+        }
+      }
+    }
+
+    function openModal(balloon) {
+        isFrozen = true;
+        cardTitle.textContent = balloon.skill.title;
+        cardDesc.textContent = balloon.skill.description;
+        overlay.classList.remove('hidden');
+        setTimeout(() => overlay.classList.add('visible'), 10);
+    }
+
+    function closeModal() {
+        overlay.classList.remove('visible');
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+            isFrozen = false;
+            requestAnimationFrame(animate);
+        }, 300);
+    }
+
+    function randomEdge() {
+      let side = Math.floor(Math.random()*4);
+      if (side === 0) return [Math.random()*W, -BALLOON_RADIUS-60];
+      if (side === 1) return [Math.random()*W, H+BALLOON_RADIUS+60];
+      if (side === 2) return [-BALLOON_RADIUS-60, Math.random()*H];
+      return [W+BALLOON_RADIUS+60, Math.random()*H];
+    }
+    function createBalloons(skills) { return skills.map(skill => new Balloon(...randomEdge(), skill)); }
+    
+    function animate() {
+      if (isFrozen) return;
+      ctx.clearRect(0,0,W,H);
+      balloons.forEach(balloon => {
+        balloon.update(W/2, H/2, balloons);
+        balloon.draw(ctx);
+      });
+      requestAnimationFrame(animate);
+    }
+    
+    function setup() {
+        W = window.innerWidth; H = window.innerHeight;
+        canvas.width = W; canvas.height = H;
+        balloons = createBalloons(SKILLS);
+    }
+
+    canvas.addEventListener('mousemove', (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left, mouseY = event.clientY - rect.top;
+        let isHovering = false;
+        for (const balloon of balloons) {
+            const dx = mouseX - balloon.x, dy = mouseY - balloon.y;
+            if (Math.sqrt(dx*dx + dy*dy) < balloon.radius) {
+                hoveredBalloon = balloon; isHovering = true; break;
+            }
+        }
+        if (isHovering) {
+            hoverCard.innerHTML = hoveredBalloon.skill.description;
+            hoverCard.style.left = `${hoveredBalloon.x + hoveredBalloon.radius - 20}px`;
+            hoverCard.style.top = `${hoveredBalloon.y - 60}px`;
+            hoverCard.classList.add('visible');
+            canvas.style.cursor = 'pointer';
+        } else {
+            hoveredBalloon = null;
+            hoverCard.classList.remove('visible');
+            canvas.style.cursor = 'default';
+        }
+    });
+    
+    canvas.addEventListener('click', () => { if (hoveredBalloon) openModal(hoveredBalloon); });
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (event) => { if (event.target === overlay) closeModal(); });
+    window.addEventListener('resize', setup);
+    
+    setup();
+    animate();
+  </script>
+</body>
+</html>
